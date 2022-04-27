@@ -1,0 +1,21 @@
+{
+	"name": "Angular",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "18-slim"
+		}
+	},
+	"settings": { },
+	"extensions": [
+		"angular.ng-template",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+	],
+	"forwardPorts": [ 4200 ],
+	"postCreateCommand": "npm install",
+	"features": {
+		"git": "os-provided",
+		"sshd": "latest",
+	}
+}
