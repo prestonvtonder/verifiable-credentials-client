@@ -7,8 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TravelComponent implements OnInit {
 
+  isSignInVisible = false;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  showSignIn() {
+    this.isSignInVisible = true;
   }
 }

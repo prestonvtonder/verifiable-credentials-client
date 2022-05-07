@@ -1,4 +1,5 @@
 @charset "utf-8";
+@import 'primeflex/primeflex.css';
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
 
 @font-face {
@@ -14,7 +15,7 @@
     text-shadow: rgba(0, 0, 0, .01) 0 0 1px
 }
 
-body {
+.super_container {
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -279,7 +280,7 @@ section {
 
 .top_bar {
     width: 100%;
-    height: 36px;
+    height: 3.2rem;
     background: #350a4e;
     -webkit-transition: all 400ms ease;
     -moz-transition: all 400ms ease;
@@ -689,7 +690,8 @@ section {
     width: 100%;
     height: 100%;
     z-index: 10;
-    background: #31124b
+    background: #31124b;
+    filter: blur(1.2px);
 }
 
 .home_slider {
@@ -5115,4 +5117,3 @@ section {
     transform: translate3d(0, -100%, 0);
   }
 }.slideOutUp{-webkit-animation-name:slideOutUp;animation-name:slideOutUp}
-
