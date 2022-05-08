@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-doh',
@@ -9,9 +10,12 @@ export class DohComponent implements OnInit {
 
   isSignInVisible = false;
 
-  constructor() { }
+  constructor(
+    private title: Title,
+  ) { }
 
   ngOnInit() {
+    this.title.setTitle('South African Department of Health')
   }
 
   showSignIn() {
