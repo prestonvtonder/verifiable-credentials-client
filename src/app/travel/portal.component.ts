@@ -9,14 +9,15 @@ import { Router } from '@angular/router';
 })
 export class PortalComponent implements OnInit {
 
-  tickets = [
-    { },
-    { },
-    { },
-    { },
-    { },
-    { },
-  ];
+  departureDate = new Date();
+  departureTime = `${this.departureDate.getHours() + 2}:20`;
+
+  returnDate = new Date().setDate(new Date().getDate() + 6);
+
+  auDepartureDate = new Date(this.departureDate.getFullYear(), 11, 5);
+  auReturnDate = new Date(this.auDepartureDate).setDate(this.auDepartureDate.getDate() + 14);
+
+  checkinOption = { icon: 'pi pi-sign-in', command: () => { } };
 
   constructor(
     private router: Router,
