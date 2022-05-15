@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
+import { CredentialService } from './credential.service';
+
 @Component({
   selector: 'app-portal',
   templateUrl: './portal.component.html',
-  styleUrls: ['./portal.component.scss']
+  styleUrls: ['./portal.component.scss'],
+  providers: [ CredentialService ],
 })
 export class PortalComponent implements OnInit {
 
@@ -18,6 +21,7 @@ export class PortalComponent implements OnInit {
   ];
 
   constructor(
+    private credentials: CredentialService,
     private router: Router,
     private title: Title,
   ) { }
