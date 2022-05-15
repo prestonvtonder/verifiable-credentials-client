@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { Title } from '@angular/platform-browser'
+import { Router } from '@angular/router'
+
+import { MenuItem } from 'primeng/api'
 
 @Component({
   selector: 'app-portal',
@@ -9,15 +11,24 @@ import { Router } from '@angular/router';
 })
 export class PortalComponent implements OnInit {
 
-  departureDate = new Date();
-  departureTime = `${this.departureDate.getHours() + 2}:20`;
+  departureDate = new Date()
+  departureTime = `${this.departureDate.getHours() + 2}:20`
 
-  returnDate = new Date().setDate(new Date().getDate() + 6);
+  returnDate = new Date().setDate(new Date().getDate() + 6)
 
-  auDepartureDate = new Date(this.departureDate.getFullYear(), 11, 5);
-  auReturnDate = new Date(this.auDepartureDate).setDate(this.auDepartureDate.getDate() + 14);
+  auDepartureDate = new Date(this.departureDate.getFullYear(), 11, 5)
+  auReturnDate = new Date(this.auDepartureDate).setDate(this.auDepartureDate.getDate() + 14)
 
-  checkinOption = { icon: 'pi pi-sign-in', command: () => { } };
+  checkinOption: MenuItem = {
+    icon: 'pi pi-sign-in',
+    command: () => { this.showCheckIn() },
+  }
+
+  isCheckInVisible = false
+  isCheckInVerifyVisible = false
+  isCheckInFinaliseVisible = false
+
+  checkInStepIndex = 0
 
   constructor(
     private router: Router,
@@ -30,5 +41,28 @@ export class PortalComponent implements OnInit {
 
   signOut() {
     this.router.navigate([ '../travel' ])
+  }
+
+  showCheckIn() {
+    this.isCheckInVisible = true
+    this.isCheckInVerifyVisible = true
+    this.checkInStepIndex = 0
+  }
+
+  hideCheckIn() {
+    this.isCheckInVisible = false
+    this.isCheckInVerifyVisible = false
+    this.isCheckInFinaliseVisible = false
+    this.checkInStepIndex = 0
+  }
+
+  finaliseCheckIn() {
+    this.hideCheckIn()
+  }
+
+  private showCheckInFinalise() {
+    this.isCheckInVerifyVisible = false
+    this.isCheckInFinaliseVisible = true
+    this.checkInStepIndex = 1
   }
 }
