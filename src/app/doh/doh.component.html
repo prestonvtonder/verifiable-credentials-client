@@ -1447,11 +1447,11 @@
   <div class="flex justify-content-center mt-5">
     <ng-container *ngIf="isSignInVisible; else skeleton">
       <ng-container *ngIf="login.qrCode$ | async as qrCode; else skeleton">
-        <div [innerHTML]="qrCode" [style]="{ height: '12rem', width:'12rem' }"></div>
+        <div [innerHTML]="qrCode"></div>
       </ng-container>
     </ng-container>
     <ng-template #skeleton>
-      <p-skeleton size="12rem" styleClass="mr-2" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
+      <p-skeleton size="16rem" styleClass="mr-2" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
     </ng-template>
   </div>
 </p-dialog>

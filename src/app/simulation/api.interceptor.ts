@@ -3,7 +3,9 @@ import { Injectable } from "@angular/core";
 
 import { delay, EMPTY, from, map, Observable, of, tap } from "rxjs";
 
-import { qrCode } from "./simulated-value";
+import { simulated } from "./simulated-value";
+
+const { qrCode } = simulated;
 
 type CheckRequest = (request: HttpRequest<any>) => boolean;
 type SimulateRequest = (request: HttpRequest<any>) => Observable<HttpEvent<any>>;
@@ -79,7 +81,7 @@ const isPresentCredentialStatus: CheckRequest =
 
 const simulatePresentCredentialStatus: SimulateRequest =
     _ => from(statusGenerator.next()).pipe(
-        map(it => !it.value ? 404 : 200),
-        map(status => new HttpResponse({ status })),
+        map(it => !it.value ? { } : { dummy: 'value' }),
+        map(body => new HttpResponse({ body })),
         delay(800),
     )

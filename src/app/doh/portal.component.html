@@ -398,10 +398,10 @@
                         </ng-container>
                         <ng-container *ngIf="event.credential">
                           <ng-container *ngIf="credentials.issue$ | async as credential; else skeleton">
-                            <div [innerHTML]="credential.qrCode" [style]="{ height: '12rem', width:'12rem' }"></div>
+                            <div [innerHTML]="credential.qrCode"></div>
                           </ng-container>
                           <ng-template #skeleton>
-                            <p-skeleton size="12rem" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
+                            <p-skeleton size="16rem" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
                           </ng-template>
                           <button
                             pButton
@@ -649,19 +649,3 @@
     </a>
   </button>
 </div>
-
-<p-dialog
-  header="Sign In"
-  [visible]="false"
-  [modal]="true"
-  [style]="{ height: '40vh', width: '30vw' }"
->
-  <p class="text-lg mt-0">Scan the QR Code below to sign in</p>
-  <div class="flex justify-content-center mt-5">
-    <p-skeleton
-      size="12rem"
-      styleClass="mr-2"
-      [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"
-    ></p-skeleton>
-  </div>
-</p-dialog>

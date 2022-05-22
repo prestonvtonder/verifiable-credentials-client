@@ -4,9 +4,11 @@ import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 
 import { MenuItem } from 'primeng/api'
+
 import { EMPTY, finalize, map, Observable, switchMap, takeWhile, tap, timer } from 'rxjs'
 
 import { CredentialService, Presentation } from './credential.service'
+import { LoadingService } from '../loading.service'
 
 @Component({
   selector: 'app-portal',
@@ -40,6 +42,7 @@ export class PortalComponent implements OnInit {
   constructor(
     public credentials: CredentialService,
     private http: HttpClient,
+    private loading: LoadingService,
     private router: Router,
     private title: Title,
   ) { }
@@ -82,10 +85,18 @@ export class PortalComponent implements OnInit {
     const afterWating = 1000
     const atInterval = 1000
     timer(afterWating, atInterval).pipe(
-      switchMap(_ => this.http.get(`/api/presentations/${id}`, { observe: 'response' })),
-      map(({ status }) => status !== 200),
+      switchMap(_ => this.http.get<any>(`/api/presentations/${id}`)),
+      map(it => !Object.entries(it).length),
       takeWhile(Boolean),
-      finalize(() => this.showCheckInFinalise()),
+      finalize(() => this.transitionToVerifiedState()),
     ).subscribe()
+  }
+
+  private transitionToVerifiedState() {
+    this.loading.is$.next(true)
+    setTimeout(() => {
+      this.loading.is$.next(false)
+      this.showCheckInFinalise()
+    }, 2000)
   }
 }
