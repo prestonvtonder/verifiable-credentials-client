@@ -1,10 +1,12 @@
+import { HttpClient } from '@angular/common/http'
 import { Component, OnInit } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 
 import { MenuItem } from 'primeng/api'
+import { EMPTY, finalize, map, Observable, switchMap, takeWhile, tap, timer } from 'rxjs'
 
-import { CredentialService } from './credential.service'
+import { CredentialService, Presentation } from './credential.service'
 
 @Component({
   selector: 'app-portal',
@@ -33,14 +35,20 @@ export class PortalComponent implements OnInit {
 
   checkInStepIndex = 0
 
+  presentation$: Observable<Presentation | null> = EMPTY
+
   constructor(
-    private credentials: CredentialService,
+    public credentials: CredentialService,
+    private http: HttpClient,
     private router: Router,
     private title: Title,
   ) { }
 
   ngOnInit() {
     this.title.setTitle('Lightfoot Traveling')
+    this.presentation$ = this.credentials.presentation$.pipe(
+        tap(it => !!it ? this.startPollingToCheckIfCredentialIsVerified(it.challenge) : null),
+    )
   }
 
   signOut() {
@@ -68,5 +76,16 @@ export class PortalComponent implements OnInit {
     this.isCheckInVerifyVisible = false
     this.isCheckInFinaliseVisible = true
     this.checkInStepIndex = 1
+  }
+
+  private startPollingToCheckIfCredentialIsVerified(id: string) {
+    const afterWating = 1000
+    const atInterval = 1000
+    timer(afterWating, atInterval).pipe(
+      switchMap(_ => this.http.get(`/api/presentations/${id}`, { observe: 'response' })),
+      map(({ status }) => status !== 200),
+      takeWhile(Boolean),
+      finalize(() => this.showCheckInFinalise()),
+    ).subscribe()
   }
 }

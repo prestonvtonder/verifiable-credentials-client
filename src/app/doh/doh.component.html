@@ -1445,8 +1445,10 @@
 <p-dialog header="Sign In" [(visible)]="isSignInVisible" [modal]="isSignInVisible" [style]="{ width: '30vw' }">
   <p class="text-lg mt-0">Scan the QR Code below to sign in</p>
   <div class="flex justify-content-center mt-5">
-    <ng-container *ngIf="login.qrCode$ | async as qrCode; else skeleton">
-      <div [innerHTML]="qrCode" [style]="{ height: '12rem', width:'12rem' }"></div>
+    <ng-container *ngIf="isSignInVisible; else skeleton">
+      <ng-container *ngIf="login.qrCode$ | async as qrCode; else skeleton">
+        <div [innerHTML]="qrCode" [style]="{ height: '12rem', width:'12rem' }"></div>
+      </ng-container>
     </ng-container>
     <ng-template #skeleton>
       <p-skeleton size="12rem" styleClass="mr-2" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>

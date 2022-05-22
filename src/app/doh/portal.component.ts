@@ -21,7 +21,7 @@ export class PortalComponent implements OnInit {
   ];
 
   constructor(
-    private credentials: CredentialService,
+    public credentials: CredentialService,
     private router: Router,
     private title: Title,
   ) { }

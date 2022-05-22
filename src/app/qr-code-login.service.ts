@@ -4,37 +4,50 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 
 import { BehaviorSubject, EMPTY, finalize, map, Observable, switchMap, takeWhile, tap, timer } from 'rxjs'
 
+import { LoadingService } from './loading.service'
 
 @Injectable({
   providedIn: 'root'
 })
 export class QrCodeLoginService {
 
-  isLoggedIn$: Observable<boolean>
+  isLoggedIn$: BehaviorSubject<boolean>
   qrCode$: Observable<SafeHtml>
 
-  constructor(http: HttpClient, sanitise: DomSanitizer) {
-    this.isLoggedIn$ = new BehaviorSubject(false);
-    this.qrCode$ = this.getQrCodeUsing(http, sanitise)
+  constructor(
+    private http: HttpClient,
+    private loading: LoadingService,
+    private sanitise: DomSanitizer,
+  ) {
+    this.isLoggedIn$ = new BehaviorSubject<boolean>(false);
+    this.qrCode$ = this.getQrCode()
   }
 
-  private getQrCodeUsing(http: HttpClient, sanitise: DomSanitizer): Observable<SafeHtml> {
-    return http.get('/api/login/qr-code', { observe: 'response' }).pipe(
+  private getQrCode(): Observable<SafeHtml> {
+    return this.http.get('/api/login/qr-code', { observe: 'response' }).pipe(
       map(({ body }) => !body ? EMPTY : body as any),
       map(({ qrCode }) => qrCode as string),
-      map(it => sanitise.bypassSecurityTrustHtml(it)),
-      tap(() => this.startPollingToCheckIfUserLoggedInUsing(http)),
+      map(it => this.sanitise.bypassSecurityTrustHtml(it)),
+      tap(() => this.startPollingToCheckIfUserLoggedIn()),
     )
   }
 
-  private startPollingToCheckIfUserLoggedInUsing(http: HttpClient) {
+  private startPollingToCheckIfUserLoggedIn() {
     const afterWating = 1000
     const atInterval = 1000
     timer(afterWating, atInterval).pipe(
-      switchMap(_ => http.get('/api/login/status', { observe: 'response' })),
+      switchMap(_ => this.http.get('/api/login/status', { observe: 'response' })),
       map(({ status }) => status !== 200),
       takeWhile(Boolean),
-      finalize(() => (this.isLoggedIn$ as BehaviorSubject<boolean>).next(true))
+      finalize(() => this.transitionToLoggedInState()),
     ).subscribe()
+  }
+
+  private transitionToLoggedInState() {
+    this.loading.is$.next(true)
+    setTimeout(() => {
+      this.loading.is$.next(false)
+      this.isLoggedIn$.next(true)
+    }, 2000)
   }
 }

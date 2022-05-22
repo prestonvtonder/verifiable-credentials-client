@@ -1,1 +1,4 @@
 <router-outlet></router-outlet>
+<p-blockUI styleClass="loading" [blocked]="(loading.is$ | async) || false">
+  <p-progressSpinner></p-progressSpinner>
+</p-blockUI>

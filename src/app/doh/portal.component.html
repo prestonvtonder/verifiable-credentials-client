@@ -397,7 +397,12 @@
                           ></button>
                         </ng-container>
                         <ng-container *ngIf="event.credential">
-                          <p-skeleton size="12rem" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
+                          <ng-container *ngIf="credentials.issue$ | async as credential; else skeleton">
+                            <div [innerHTML]="credential.qrCode" [style]="{ height: '12rem', width:'12rem' }"></div>
+                          </ng-container>
+                          <ng-template #skeleton>
+                            <p-skeleton size="12rem" [style]="{ backgroundColor: 'rgb(0, 94, 160, .4)' }"></p-skeleton>
+                          </ng-template>
                           <button
                             pButton
                             label="Add to wallet"
