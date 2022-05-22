@@ -694,8 +694,12 @@
         </div>
       </li>
     </ul>
-    <div class="flex justify-content-end">
-      <p-button (onClick)="finaliseCheckIn()">Add to wallet</p-button>
-    </div>
   </div>
+  <ng-template pTemplate="footer">
+    <ng-container *ngIf="isCheckInFinaliseVisible">
+      <div class="flex justify-content-end">
+        <p-button (onClick)="finaliseCheckIn()">Add to wallet</p-button>
+      </div>
+    </ng-container>
+  </ng-template>
 </p-dialog>
