@@ -1,7 +1,7 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
-import { delay, EMPTY, from, map, Observable, of, tap } from "rxjs";
+import { delay, EMPTY, from, map, Observable, of } from "rxjs";
 
 import { simulated } from "./simulated-value";
 
@@ -36,7 +36,7 @@ const simulate: SimulateRequest =
 
 const isQrCodeLogin: CheckRequest =
     request => request.method === 'GET'
-            && request.url === '/api/login/qr-code'
+            && request.urlWithParams === '/api/presentations?type=didauth'
 
 const simulateQrCodeLogin: SimulateRequest =
     _ => of(new HttpResponse({ body: { qrCode }}))
@@ -44,12 +44,14 @@ const simulateQrCodeLogin: SimulateRequest =
 
 const isLoginStatus: CheckRequest =
     request => request.method === 'GET'
-            && request.url === '/api/login/status'
+            && request.url === '/api/presentations/status'
 
 const simulateLoginStatus: SimulateRequest =
     _ => from(statusGenerator.next()).pipe(
-        map(it => !it.value ? 401 : 200),
-        map(status => new HttpResponse({ status })),
+        map(({ value }) => {
+            if (!value) throw new HttpErrorResponse({ status: 404 })
+            else return new HttpResponse({ status: 200 })
+        }),
         delay(800),
     )
 
