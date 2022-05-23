@@ -72,7 +72,10 @@ export class PortalComponent implements OnInit {
   }
 
   finaliseCheckIn() {
-    this.hideCheckIn()
+    this.credentials.issueCredential().pipe(
+      switchMap(({ jwe }) => this.credentials.sendMessageToWallet(jwe)),
+      finalize(() => this.hideCheckIn()),
+    ).subscribe()
   }
 
   private showCheckInFinalise() {
