@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 
-import { BehaviorSubject, delay, EMPTY, finalize, map, Observable, retry, takeWhile, tap } from 'rxjs'
+import { BehaviorSubject, delay, EMPTY, finalize, map, Observable, retry, switchMap, take, takeWhile, tap, timer } from 'rxjs'
 
 import { LoadingService } from './loading.service'
 
@@ -36,10 +36,11 @@ export class QrCodeLoginService {
 
   private startPollingToCheckIfUserLoggedIn() {
     const afterWating = 1000
-    this.http.get('/api/presentations/status').pipe(
-      delay(afterWating),
-      retry({ delay: afterWating }),
-      takeWhile(body => !!body || body === null),
+    const atInterval = 1000
+    timer(afterWating, atInterval).pipe(
+      switchMap(_ => this.http.get<any>('/api/presentations/status')),
+      map(({ status }) => status !== 'Success'),
+      takeWhile(Boolean),
       finalize(() => this.transitionToLoggedInState()),
     ).subscribe()
   }

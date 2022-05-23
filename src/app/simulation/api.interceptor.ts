@@ -49,8 +49,8 @@ const isLoginStatus: CheckRequest =
 const simulateLoginStatus: SimulateRequest =
     _ => from(statusGenerator.next()).pipe(
         map(({ value }) => {
-            if (!value) throw new HttpErrorResponse({ status: 404 })
-            else return new HttpResponse({ status: 200 })
+            if (!value) return new HttpResponse({ status: 200, body: { status: 'Failure' } })
+            else return new HttpResponse({ status: 200, body: { status: 'Success' } })
         }),
         delay(800),
     )
