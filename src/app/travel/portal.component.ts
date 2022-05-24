@@ -50,7 +50,7 @@ export class PortalComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle('Lightfoot Traveling')
     this.presentation$ = this.credentials.presentation$.pipe(
-        tap(it => !!it ? this.startPollingToCheckIfCredentialIsVerified(it.challenge) : null),
+        tap(it => !!it ? this.startPollingToCheckIfCredentialIsVerified() : null),
     )
   }
 
@@ -84,12 +84,12 @@ export class PortalComponent implements OnInit {
     this.checkInStepIndex = 1
   }
 
-  private startPollingToCheckIfCredentialIsVerified(id: string) {
+  private startPollingToCheckIfCredentialIsVerified() {
     const afterWating = 1000
     const atInterval = 1000
     timer(afterWating, atInterval).pipe(
-      switchMap(_ => this.http.get<any>(`/api/presentations/${id}`)),
-      map(it => !Object.entries(it).length),
+      switchMap(_ => this.http.get<any>(`/api/presentations/status`)),
+      map(({ status }) => status !== 'Success'),
       takeWhile(Boolean),
       finalize(() => this.transitionToVerifiedState()),
     ).subscribe()

@@ -25,7 +25,7 @@ export class CredentialService {
   }
 
   private getCredential(): Observable<Presentation> {
-    return this.http.post<PresentationResponse>('/api/presentations', { messagingDid: 'did:key:z6Mkg56eqRqaW1wfiiiCcbwJgbLTLV99Z7pFdWrKkkBTPp88', type: 'didauth' }).pipe(
+    return this.http.get<PresentationResponse>(`/api/presentations?type=vaccine`).pipe(
         map(({ qrCode, ...otherProperties }) => ({
           ...otherProperties,
           qrCode: this.sanitiser.bypassSecurityTrustHtml(qrCode)
