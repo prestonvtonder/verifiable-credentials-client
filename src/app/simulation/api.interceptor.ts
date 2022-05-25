@@ -10,7 +10,7 @@ const { qrCode } = simulated;
 type CheckRequest = (request: HttpRequest<any>) => boolean;
 type SimulateRequest = (request: HttpRequest<any>) => Observable<HttpEvent<any>>;
 
-const SIMULATE_AFTER = 1000 //ms
+const SIMULATE_AFTER = 2000 //ms
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
@@ -31,6 +31,7 @@ const simulate: SimulateRequest =
       else if (isIssueCredential(request)) return simulateIssueCredential(request)
       else if (isPresentCredential(request)) return simulatePresentCredential(request)
       else if (isPresentCredentialStatus(request)) return simulatePresentCredentialStatus(request)
+      else if (isAddToWallet(request)) return simulateAddToWallet(request)
       else return EMPTY
     };
 
@@ -56,6 +57,12 @@ const simulateLoginStatus: SimulateRequest =
     )
 
 const statusGenerator = (async function*() {
+  const everyNth = 10
+  let i = 1 - everyNth
+  while (true) yield i++ % everyNth === 0
+})()
+
+const addToWalletGenerator = (async function*() {
   const everyNth = 4
   let i = 1 - everyNth
   while (true) yield i++ % everyNth === 0
@@ -70,8 +77,8 @@ const simulateIssueCredential: SimulateRequest =
         .pipe(delay(SIMULATE_AFTER))
 
 const isPresentCredential: CheckRequest =
-    request => request.method === 'POST'
-            && request.url === '/api/presentations'
+    request => request.method === 'GET'
+            && request.url === '/api/presentations?type=vaccine'
 
 const simulatePresentCredential: SimulateRequest =
     _ => of(new HttpResponse({ body: { qrCode }}))
@@ -79,11 +86,26 @@ const simulatePresentCredential: SimulateRequest =
 
 const isPresentCredentialStatus: CheckRequest =
     request => request.method === 'GET'
-            && request.url.startsWith('/api/presentations/')
+            && request.url === '/api/presentations/status'
 
 const simulatePresentCredentialStatus: SimulateRequest =
     _ => from(statusGenerator.next()).pipe(
-        map(it => !it.value ? { } : { dummy: 'value' }),
-        map(body => new HttpResponse({ body })),
+        map(({ value }) => {
+            if (!value) return new HttpResponse({ status: 200, body: { status: 'Failure' } })
+            else return new HttpResponse({ status: 200, body: { status: 'Success' } })
+        }),
+        delay(800),
+    )
+
+const isAddToWallet: CheckRequest =
+    request => request.method === 'POST'
+            && request.url === '/api/messages'
+
+const simulateAddToWallet: SimulateRequest =
+    _ => from(addToWalletGenerator.next()).pipe(
+        map(({ value }) => {
+            if (!value) return new HttpResponse({ status: 200, body: { status: 'Failure' } })
+            else return new HttpResponse({ status: 200, body: { status: 'Success' } })
+        }),
         delay(800),
     )
