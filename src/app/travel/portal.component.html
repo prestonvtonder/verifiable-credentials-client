@@ -698,7 +698,7 @@
   <ng-template pTemplate="footer">
     <ng-container *ngIf="isCheckInFinaliseVisible">
       <div class="flex justify-content-end">
-        <p-button (onClick)="finaliseCheckIn()">Add to wallet</p-button>
+        <p-button (onClick)="finaliseCheckIn()" [loading]="isAddToWalletLoading">Add to wallet</p-button>
       </div>
     </ng-container>
   </ng-template>

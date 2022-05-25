@@ -39,6 +39,8 @@ export class PortalComponent implements OnInit {
 
   presentation$: Observable<Presentation | null> = EMPTY
 
+  isAddToWalletLoading = false
+
   constructor(
     public credentials: CredentialService,
     private http: HttpClient,
@@ -69,9 +71,11 @@ export class PortalComponent implements OnInit {
     this.isCheckInVerifyVisible = false
     this.isCheckInFinaliseVisible = false
     this.checkInStepIndex = 0
+    this.isAddToWalletLoading = false
   }
 
   finaliseCheckIn() {
+    this.isAddToWalletLoading = true
     this.credentials.issueCredential().pipe(
       switchMap(({ jwe }) => this.credentials.sendMessageToWallet(jwe)),
       finalize(() => this.hideCheckIn()),
